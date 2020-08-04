@@ -92,3 +92,28 @@ exports.LoginSns = async (req, res, next) => {
     res.status(500).json({ error: e });
   }
 };
+
+// @ desc   로그아웃 api: DB에서 해당 유저의 현재 토큰값을 삭제
+// @ route  POST /api/v1/users/Logout
+// @parameters  X
+
+exports.Logout = async (req, res, next) => {
+  // 토큰테이블에서, 현재 이 헤더에 있는 토큰으로, 삭제한다.
+  let token = req.user.token;
+  let user_id = req.user.id;
+  let query = `delete from sns_token where user_id = ${user_id} and token = "${token}"`;
+
+  try {
+    [result] = await connection.query(query);
+    if (result.affectedRows == 1) {
+      res.status(200).json({ succese: true, result: result });
+      return;
+    } else {
+      res.status(400).json({ succese: false });
+      return;
+    }
+  } catch (e) {
+    res.status(500).json({ succese: false, error: e });
+    return;
+  }
+};
