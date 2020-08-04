@@ -1,9 +1,14 @@
 const express = require("express");
 const dotenv = require("dotenv");
+
 dotenv.config;
 
 const app = express();
 app.use(express.json());
+
+const sns_users = require("./routes/sns_users");
+
+app.use("/api/v1/users", sns_users);
 
 const PORT = process.env.PORT || 5700;
 

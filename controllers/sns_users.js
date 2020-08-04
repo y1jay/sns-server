@@ -51,3 +51,44 @@ exports.signUp = async (req, res, next) => {
     res.status(500).json({ success: false, error: e });
   }
 };
+
+// @desc   로그인
+// @route   POST /api/v1/sns_users/login
+// @paramaeters  email, passwd
+// async 는 동시에 처리할 수 있게해라
+exports.LoginSns = async (req, res, next) => {
+  let email = req.body.email;
+  let passwd = req.body.passwd;
+
+  let query = `select * from sns_user where email ="${email}"`;
+
+  try {
+    [rows] = await connection.query(query);
+
+    // 비밀번호 체크 : 비밀번호가 서로 맞는지 확인
+    let savedPasswd = rows[0].passwd;
+
+    const isMatch = await bcrypt.compare(passwd, savedPasswd);
+    if (isMatch == false) {
+      res.status(400).json({ succese: false, result: isMatch });
+      return;
+    }
+    let token = jwt.sign(
+      { user_id: rows[0].id },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    query = `insert into sns_token (token,user_id) values(?,?)`;
+
+    let data = [token, rows[0].id];
+    try {
+      [result] = await connection.query(query, data);
+      res.status(200).json({ succese: true, result: isMatch, token: token });
+      return;
+    } catch {
+      res.status(500).json({ error: e });
+      return;
+    }
+  } catch {
+    res.status(500).json({ error: e });
+  }
+};
