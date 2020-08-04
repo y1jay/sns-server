@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 
-dotenv.config;
+dotenv.config({ path: "./config/config.env" });
 
 const fileupload = require("express-fileupload");
 const path = require("path");
@@ -12,13 +12,10 @@ app.use(fileupload());
 app.use(express.static(path.join(__dirname, "posting")));
 const sns_users = require("./routes/sns_users");
 
-app.use("/api/v1/users", sns_users);
+app.use("/api/v1/sns_users", sns_users);
 
 const PORT = process.env.PORT || 5700;
 
-app.get("/", (req, res, next) => {
-  res.json({ success: true });
-});
 app.listen(PORT, () => {
   console.log("App listening on port 5700!");
 });

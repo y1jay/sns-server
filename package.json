@@ -2,10 +2,10 @@
   "name": "sns-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon server",
-    "start": "node server"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
