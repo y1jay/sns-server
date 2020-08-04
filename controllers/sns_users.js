@@ -188,3 +188,40 @@ exports.get_myphoto = async (req, res, next) => {
 // @route  GET /api/v1/sns_users/posting
 // @request file
 // @response  success
+exports.update_photo = async (req, res, next) => {
+  let user_id = req.user.id;
+  let posting = req.body.posting;
+  if (!user_id || !req.files) {
+    res.status(400).json({ message: "에러" });
+    return;
+  }
+
+  const photo = req.files.photo;
+  if (photo.mimetype.startsWith("image") == false) {
+    res.status(400).json({ message: "이미지가 아닌뒤" });
+    return;
+  }
+
+  if (photo.size > process.env.MAX_FILE_SIZE) {
+    res.status(400).json({ message: "파일이 이따시만합니다" });
+    return;
+  }
+
+  photo.name = `photo_${user_id}${path.parse(photo.name).ext}`;
+
+  let fileUploadPath = `${process.env.FILE_UPLOAD_PATH}/${photo.name}`;
+  photo.mv(fileUploadPath, async (err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  });
+
+  let query = `update sns set photo_url = "${photo.name}",posting = "${posting}" where user_id = ${user_id}`;
+  try {
+    [result] = await connection.query(query);
+    res.status(200).json({ message: "면상이 업로드 됐습니다." });
+  } catch (e) {
+    res.status(500).json({ message: "ㅄ" });
+  }
+};
