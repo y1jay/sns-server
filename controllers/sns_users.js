@@ -225,3 +225,14 @@ exports.update_photo = async (req, res, next) => {
     res.status(500).json({ message: "ㅄ" });
   }
 };
+
+exports.delete_photo = async (req, res, next) => {
+  let user_id = req.user.id;
+  let query = `delete from sns where user_id = ${user_id}`;
+  try {
+    [result] = await connection.query(query);
+    res.status(200).json({ message: "사진이 삭제 되었습니다." });
+  } catch (e) {
+    res.status(500).json({ message: "ㅄ" });
+  }
+};
