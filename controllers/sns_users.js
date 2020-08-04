@@ -163,7 +163,7 @@ exports.Photo_Posting = async (req, res, next) => {
   let query = `insert into sns(user_id,photo_url,posting)values(${user_id},"${photo.name}","${posting}")`;
   try {
     [result] = await connection.query(query);
-    res.status(200).json({ message: "면상이 업로드 됐습니다." });
+    res.status(200).json({ message: "사진이 업로드 됐습니다." });
   } catch (e) {
     res.status(500).json({ message: "ㅄ" });
   }
@@ -174,11 +174,11 @@ exports.Photo_Posting = async (req, res, next) => {
 // @request file
 // @response  success
 exports.get_myphoto = async (req, res, next) => {
-  let query = `select photo_url from sns`;
+  let query = `select photo_url,user_id from sns`;
 
   try {
     [rows] = await connection.query(query);
-    res.status(200).json({ message: "사진들", rows: rows });
+    res.status(200).json({ message: "공개된 사진들", rows: rows });
   } catch (e) {
     res.status(500).json({ success: false });
   }
@@ -198,7 +198,7 @@ exports.update_photo = async (req, res, next) => {
 
   const photo = req.files.photo;
   if (photo.mimetype.startsWith("image") == false) {
-    res.status(400).json({ message: "이미지가 아닌뒤" });
+    res.status(400).json({ message: "이미지가 아닌뒙" });
     return;
   }
 
@@ -220,7 +220,7 @@ exports.update_photo = async (req, res, next) => {
   let query = `update sns set photo_url = "${photo.name}",posting = "${posting}" where user_id = ${user_id}`;
   try {
     [result] = await connection.query(query);
-    res.status(200).json({ message: "면상이 업로드 됐습니다." });
+    res.status(200).json({ message: "사진이 수정 되었습니다." });
   } catch (e) {
     res.status(500).json({ message: "ㅄ" });
   }
