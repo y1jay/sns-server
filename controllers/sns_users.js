@@ -1,6 +1,6 @@
 const connection = require("../db/mysql_connection");
 const validator = require("validator");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 // @desc    회원가입
@@ -170,7 +170,7 @@ exports.Photo_Posting = async (req, res, next) => {
 };
 
 // @desc   사진가져오는 API
-// @route  GET /api/v1/sns_users/posting
+// @route  GET /api/v1/sns_users/photo
 // @request file
 // @response  success
 exports.get_myphoto = async (req, res, next) => {
@@ -183,3 +183,8 @@ exports.get_myphoto = async (req, res, next) => {
     res.status(500).json({ success: false });
   }
 };
+
+// @desc   사진수정하는 API
+// @route  GET /api/v1/sns_users/posting
+// @request file
+// @response  success
