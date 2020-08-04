@@ -3,9 +3,13 @@ const dotenv = require("dotenv");
 
 dotenv.config;
 
+const fileupload = require("express-fileupload");
+const path = require("path");
+
 const app = express();
 app.use(express.json());
-
+app.use(fileupload());
+app.use(express.static(path.join(__dirname, "posting")));
 const sns_users = require("./routes/sns_users");
 
 app.use("/api/v1/users", sns_users);
