@@ -257,7 +257,7 @@ exports.send_friend = async (req, res, next) => {
 };
 
 //@ desc    친구수락
-//@ route    PUT/api/v1/sns_users/check_friend
+//@ route    PUT/api/v1/sns_users/:id/check_friend
 exports.check_friend = async (req, res, next) => {
   let user_id = req.user.id;
   let friend_id = req.params.id;
@@ -271,5 +271,22 @@ exports.check_friend = async (req, res, next) => {
       .json({ success: true, message: "친구요청을 수락하였습니다." });
   } catch (e) {
     res.status(500).json({ success: false, message: "친구요청이 없습니다." });
+  }
+};
+
+// @ desc   지정 친구의 사진을 가져오는 API
+// @ route  GET/api/v1/sns_users/:id/get_friend
+exports.get_friend = async (req, res, next) => {
+  let user_id = req.user.id;
+  let friend_id = req.params.id;
+  let query = `select s.user_id,s.photo_url,s.posting from sns as s
+join sns_friends as sf on s.user_id = sf.user_id 
+where sf.friend_id = ${user_id} and sf.user_id= ${friend_id} and share = 0 `;
+
+  try {
+    [rows] = await connection.query(query);
+    res.status(200).json({ success: true, rows: rows });
+  } catch (e) {
+    res.status(500).json({ error: e });
   }
 };
