@@ -14,8 +14,8 @@ const sns_users = require("./routes/sns_users");
 
 app.use("/api/v1/sns_users", sns_users);
 
-const PORT = process.env.PORT || 5700;
+const PORT = process.env.PORT || 5900;
 
 app.listen(PORT, () => {
-  console.log("App listening on port 5700!");
+  console.log("App listening on port 5900!");
 });
