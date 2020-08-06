@@ -11,7 +11,7 @@ exports.send_friend = async (req, res, next) => {
     [rows] = await connection.query(query);
 
     if (rows.length == 0) {
-      res.status(400).json({ message: "찾을 수 없음" });
+      res.status(400).json({ message: "없는 아이디 입니다." });
       return;
     } else {
       query = `insert into sns_friends(user_id,friend_id)values(${user_id},${friend_id})`;
@@ -21,7 +21,6 @@ exports.send_friend = async (req, res, next) => {
         res.status(200).json({
           success: true,
           message: "친구요청이 전송되었습니다.",
-          rows: rows,
         });
       } catch (e) {
         if (e.errno == 1062) {

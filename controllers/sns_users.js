@@ -195,7 +195,7 @@ exports.Photo_Posting = async (req, res, next) => {
 // @route  GET /api/v1/sns_users/photo
 // @request file
 // @response  success
-exports.get_myphoto = async (req, res, next) => {
+exports.shared_photo = async (req, res, next) => {
   let query = `select photo_url,user_id from sns where share = 1`;
 
   try {
@@ -212,6 +212,7 @@ exports.get_myphoto = async (req, res, next) => {
 // @response  success
 exports.update_photo = async (req, res, next) => {
   let user_id = req.user.id;
+  let id = req.body.id;
   let posting = req.body.posting;
   if (!user_id || !req.files) {
     res.status(400).json({ message: "에러" });
@@ -239,7 +240,8 @@ exports.update_photo = async (req, res, next) => {
     }
   });
 
-  let query = `update sns set photo_url = "${photo.name}",posting = "${posting}" where user_id = ${user_id}`;
+  let query = `update sns set photo_url = "${photo.name}",
+  posting = "${posting}" where user_id = ${user_id} and id = ${id} `;
   try {
     [result] = await connection.query(query);
     res.status(200).json({ message: "사진이 수정 되었습니다." });
@@ -252,10 +254,8 @@ exports.update_photo = async (req, res, next) => {
 exports.delete_photo = async (req, res, next) => {
   let user_id = req.user.id;
   let query = `delete from sns where user_id = ${user_id}`;
-  let photo_url;
   try {
     [result] = await connection.query(query);
-    photo_url = result[0].photo_url;
     res.status(200).json({ message: "사진이 삭제 되었습니다." });
   } catch (e) {
     res.status(500).json({ message: "ㅄ" });
