@@ -2,7 +2,7 @@ const connection = require("../db/mysql_connection");
 const { restart } = require("nodemon");
 
 //@ desc    친구요청
-//@ route   POST/api/v1/sns_users/send_friend
+//@ route   POST/api/v1/sns_friends/send_friend
 exports.send_friend = async (req, res, next) => {
   let user_id = req.user.id;
   let friend_id = req.body.friend_id;
@@ -37,7 +37,7 @@ exports.send_friend = async (req, res, next) => {
 };
 
 //@ desc    친구수락
-//@ route    PUT/api/v1/sns_users/:id/check_friend
+//@ route    PUT/api/v1/sns_friends/:id/check_friend
 exports.check_friend = async (req, res, next) => {
   let user_id = req.user.id;
   let friend_id = req.params.id;
@@ -45,17 +45,21 @@ exports.check_friend = async (req, res, next) => {
     where user_id = ${friend_id} and friend_id = ${user_id}`;
 
   try {
-    [result] = await connection.query(query);
-    res
-      .status(200)
-      .json({ success: true, message: "친구요청을 수락하였습니다." });
+    [rows] = await connection.query(query);
+    if (rows.changedRows == 1) {
+      res
+        .status(200)
+        .json({ success: true, message: "친구요청을 수락하였습니다." });
+    } else if (rows.changedRows == 0) {
+      res.status(400).json({ success: false, message: "친구요청이 없습니다." });
+    }
   } catch (e) {
-    res.status(500).json({ success: false, message: "친구요청이 없습니다." });
+    res.status(500).json({ success: false });
   }
 };
 
 // @ desc   지정 친구의 사진을 가져오는 API
-// @ route  GET/api/v1/sns_users/:id/get_friend
+// @ route  GET/api/v1/sns_friends/:id/get_friend
 exports.get_friend = async (req, res, next) => {
   let user_id = req.user.id;
   let friend_id = req.params.id;
@@ -72,7 +76,7 @@ exports.get_friend = async (req, res, next) => {
 };
 
 //@ desc    친구들의 포스팅을 시간순으로 가져오는 API (최신글부터)
-//@ route   GET/api/v1/sns_users/friends
+//@ route   GET/api/v1/sns_friends/friends
 exports.friends = async (req, res, next) => {
   let user_id = req.user.id;
   let offset = req.query.offset;

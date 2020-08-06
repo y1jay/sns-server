@@ -118,6 +118,27 @@ exports.Logout = async (req, res, next) => {
   }
 };
 
+//@desc    유저 삭제 삭제시 포스팅을 전부 삭제
+//@route   DELETE/api/v1/sns_friends/an_delete
+exports.on_delete = async (req, res, next) => {
+  let user_id = req.user.id;
+  let query = `delete from sns_user where id = ${user_id}`;
+  try {
+    [result] = await connection.query(query);
+    if (result.affectedRows == 1) {
+      query = `delete from sns where user_id = ${user_id}`;
+      try {
+        [row] = await connection.query(query);
+        res.status(200).json({ message: "탈퇴가 완료되었습니다." });
+      } catch (e) {
+        res.status(400).json({ error: e });
+      }
+    }
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
 // @desc   사진포스팅 하는 API
 // @route  POST /api/v1/sns_users/posting
 // @request file
