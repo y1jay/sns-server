@@ -1,4 +1,5 @@
 const connection = require("../db/mysql_connection");
+const { restart } = require("nodemon");
 
 //@ desc    친구요청
 //@ route   POST/api/v1/sns_users/send_friend
@@ -77,12 +78,14 @@ exports.friends = async (req, res, next) => {
   let offset = req.query.offset;
   let query = `select s.user_id, s.photo_url, s.posting, s.created_at from sns as s 
   join sns_friends as sf on s.user_id = sf.user_id 
-  where sf.user_id = ${user_id} order by s.created_at desc limit ${offset},25 ;`;
+  where sf.user_id = ${user_id} or sf.friend_id= ${user_id} 
+  order by s.created_at desc limit ${offset},25 ;`;
 
   try {
     [rows] = await connection.query(query);
-    res.status(200), json({ rows: rows });
+    res.status(200).json({ success: true, rows: rows });
+    return;
   } catch (e) {
-    res.status(500).json({ error: e });
+    res.status(500).json({ error: e, message: "에러" });
   }
 };
