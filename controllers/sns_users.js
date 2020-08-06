@@ -5,9 +5,8 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 // @desc    회원가입
 // @route   POST /api/v1/users
-// @route   POST /api/v1/users/register
-// @route   POST /api/v1/users/
 // @parameters  email, passwd
+// @response    success, token
 exports.signUp = async (req, res, next) => {
   let email = req.body.email;
   let passwd = req.body.passwd;
