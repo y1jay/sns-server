@@ -13,21 +13,20 @@ exports.send_friend = async (req, res, next) => {
     if (rows.length == 0) {
       res.status(400).json({ message: "찾을 수 없음" });
       return;
-    }
-
-    let already = rows[0].friend_id;
-
-    if (friend_id == already) {
-      res.status(400).json({ message: "이미 친구요청을 보냈습니다" });
     } else {
       query = `insert into sns_friends(user_id,friend_id)values(${user_id},${friend_id})`;
       try {
         [result] = await connection.query(query);
-        res
-          .status(200)
-          .json({ success: true, message: "친구요청이 전송되었습니다." });
+
+        res.status(200).json({
+          success: true,
+          message: "친구요청이 전송되었습니다.",
+          rows: rows,
+        });
       } catch (e) {
-        res.status(500).json({ error: e });
+        if (e.errno == 1062) {
+          res.status(500).json({ message: "이미 친구요청을 보냈습니다" });
+        }
       }
     }
   } catch (e) {
