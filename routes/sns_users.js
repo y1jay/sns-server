@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.route("/").post(signUp);
 router.route("/login").post(LoginSns);
-router.route("/logout").post(auth, Logout);
+router.route("/logout").delete(auth, Logout);
 router.route("/posting").post(auth, Photo_Posting);
 router.route("/photo").get(shared_photo);
 router.route("/update_photo").put(auth, update_photo);
