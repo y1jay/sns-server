@@ -93,7 +93,7 @@ exports.LoginSns = async (req, res, next) => {
 };
 
 // @ desc   로그아웃 api: DB에서 해당 유저의 현재 토큰값을 삭제
-// @ route  POST /api/v1/users/Logout
+// @ route  DELETE /api/v1/users/Logout
 // @parameters  X
 
 exports.Logout = async (req, res, next) => {
@@ -105,14 +105,14 @@ exports.Logout = async (req, res, next) => {
   try {
     [result] = await connection.query(query);
     if (result.affectedRows == 1) {
-      res.status(200).json({ succese: true, result: result });
+      res.status(200).json({ success: true, result: result });
       return;
     } else {
-      res.status(400).json({ succese: false });
+      res.status(400).json({ success: false });
       return;
     }
   } catch (e) {
-    res.status(500).json({ succese: false, error: e });
+    res.status(500).json({ success: false, error: e });
     return;
   }
 };
