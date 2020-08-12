@@ -260,3 +260,4 @@ exports.delete_photo = async (req, res, next) => {
     res.status(500).json({ message: "ㅄ" });
   }
 };
+//
