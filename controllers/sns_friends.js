@@ -77,10 +77,11 @@ exports.get_friend = async (req, res, next) => {
 exports.friends = async (req, res, next) => {
   let user_id = req.user.id;
   let offset = req.query.offset;
+  let limit = req.query.limit;
   let query = `select s.user_id, s.photo_url, s.posting, s.created_at from sns as s 
   join sns_friends as sf on s.user_id = sf.friend_id 
   where sf.user_id = ${user_id} or sf.friend_id= ${user_id} and sf.ok = 1
-  order by s.created_at desc limit ${offset},25 ;`;
+  order by s.created_at desc limit ${offset},${limit} ;`;
 
   try {
     [rows] = await connection.query(query);
