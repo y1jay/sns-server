@@ -186,7 +186,7 @@ exports.Photo_Posting = async (req, res, next) => {
     [rows] = await connection.query(query);
     res.status(200).json({ success: true });
   } catch (e) {
-    res.status(500).json({ success: false });
+    res.status(500).json({ error: e });
   }
 };
 
