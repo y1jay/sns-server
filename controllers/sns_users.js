@@ -69,7 +69,7 @@ exports.LoginSns = async (req, res, next) => {
 
     const isMatch = await bcrypt.compare(passwd, savedPasswd);
     if (isMatch == false) {
-      res.status(400).json({ succese: false, result: isMatch });
+      res.status(400).json({ success: false, result: isMatch });
       return;
     }
     let token = jwt.sign(
@@ -81,7 +81,7 @@ exports.LoginSns = async (req, res, next) => {
     let data = [token, rows[0].id];
     try {
       [result] = await connection.query(query, data);
-      res.status(200).json({ succese: true, result: isMatch, token: token });
+      res.status(200).json({ success: true, result: isMatch, token: token });
       return;
     } catch {
       res.status(500).json({ error: e });
