@@ -163,7 +163,7 @@ exports.Photo_Posting = async (req, res, next) => {
     return;
   }
   // 파일크기가 정해진 크기보다 큰지 체크 정해진 크기는 process.env.MAX_FILE_SIZE에 넣어놨다.
-  if (photo.size > process.env.MAX_FILE_SIZE) {
+  if (photo.size >= process.env.MAX_FILE_SIZE) {
     res.status(400).json({ message: "파일이 이따시만합니다" });
     return;
   }
