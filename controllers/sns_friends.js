@@ -85,7 +85,7 @@ exports.friends = async (req, res, next) => {
 
   try {
     [rows] = await connection.query(query);
-    res.status(200).json({ success: true, rows: rows });
+    res.status(200).json({ success: true, rows: rows, cnt: rows.length });
     return;
   } catch (e) {
     res.status(500).json({ error: e, message: "에러" });
