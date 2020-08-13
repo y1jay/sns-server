@@ -183,10 +183,10 @@ exports.Photo_Posting = async (req, res, next) => {
 
   let query = `insert into sns(user_id,photo_url,posting,share)values(${user_id},"${photo.name}","${posting}",${public})`;
   try {
-    [result] = await connection.query(query);
-    res.status(200).json({ message: "사진이 업로드 됐습니다." });
+    [rows] = await connection.query(query);
+    res.status(200).json({ success: true });
   } catch (e) {
-    res.status(500).json({ message: "ㅄ" });
+    res.status(500).json({ success: false });
   }
 };
 
