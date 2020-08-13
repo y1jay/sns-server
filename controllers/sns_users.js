@@ -149,7 +149,7 @@ exports.on_delete = async (req, res, next) => {
 exports.Photo_Posting = async (req, res, next) => {
   let user_id = req.user.id;
   let posting = req.body.posting;
-  let public = req.body.public;
+
   if (!user_id || !req.files) {
     res.status(400).json({ message: "에러" });
     return;
@@ -181,7 +181,7 @@ exports.Photo_Posting = async (req, res, next) => {
     }
   });
 
-  let query = `insert into sns(user_id,photo_url,posting,share)values(${user_id},"${photo.name}","${posting}",${public})`;
+  let query = `insert into sns(user_id,photo_url,posting)values(${user_id},"${photo.name}","${posting}")`;
   try {
     [rows] = await connection.query(query);
     res.status(200).json({ success: true });
