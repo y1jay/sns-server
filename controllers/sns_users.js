@@ -3,6 +3,7 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+var AWS = require("aws-sdk");
 // @desc    회원가입
 // @route   POST /api/v1/users
 // @parameters  email, passwd
@@ -172,22 +173,41 @@ exports.Photo_Posting = async (req, res, next) => {
   // path 의 parse는 이름과 확장자명을 파싱하는데 우리는 이름은 버리고 확장자명만 가져옴.
   photo.name = `photo_${user_id}${path.parse(photo.name).ext}`;
 
-  // ./public/upload/photo_3.jpg 로 저장하겠다는 것
-  let fileUploadPath = `${process.env.FILE_UPLOAD_PATH}/${photo.name}`;
-  photo.mv(fileUploadPath, async (err) => {
-    if (err) {
-      console.error(err);
-      return;
+  // aws s3에 억세스 할 권한 설정.
+  let file = photo.data;
+  const S3_BUCKET = "yijun-test";
+  const AWS_ACCESS_KEY_ID = "AKIARLTXU2PG26LJK4XE";
+  const AWS_SECRET_ACCESS_KEY = "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";
+
+  AWS.config.update({
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  });
+
+  // s3에 파일 업로드
+
+  const s3 = new AWS.S3();
+
+  let params = {
+    Bucket: S3_BUCKET,
+    Key: photo.name,
+    Body: file,
+    ContentType: path.parse(photo.name).ext.split(".")[1],
+    ACL: "public-read",
+  };
+
+  s3.upload(params, async function (err, s3Data) {
+    console.log("err : ", err, "data : ", s3Data);
+    let query = `insert into sns(user_id,photo_url,posting)values(${user_id},"${photo.name}","${posting}")`;
+    try {
+      [rows] = await connection.query(query);
+      res.status(200).json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: e });
     }
   });
 
-  let query = `insert into sns(user_id,photo_url,posting)values(${user_id},"${photo.name}","${posting}")`;
-  try {
-    [rows] = await connection.query(query);
-    res.status(200).json({ success: true });
-  } catch (e) {
-    res.status(500).json({ error: e });
-  }
+  // 위의 예 photo_3_220102831.jpg   (.jpg에 해당한다)
 };
 
 // @desc   사진가져오는 API
